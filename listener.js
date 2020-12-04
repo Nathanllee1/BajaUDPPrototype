@@ -11,7 +11,7 @@ module.exports = class Listener {
         dataBuffer = []
     }
 
-    //
+    // Get historical data
     query(timeRange, granularity) {
         
     }
