@@ -1,40 +1,34 @@
 // Recieve Data
-const dgram = require('dgram');
-const server = dgram.createSocket('udp4');
-
-const dataStream = fs.
-
-server.on('error', (err) => {
-  console.log(`server error:\n${err.stack}`);
-  server.close();
+var dgram = require('dgram');
+var server = dgram.createSocket('udp4');
+//const dataStream = fs.
+server.on('error', function (err) {
+    console.log("server error:\n" + err.stack);
+    server.close();
 });
-
-server.on('message', (msg, rinfo) => {
-  let data = JSON.parse(String.fromCharCode(...(JSON.parse(JSON.stringify(msg))).data));
-  console.log(data);
+server.on('message', function (msg, rinfo) {
+    var data = JSON.parse(String.fromCharCode.apply(String, (JSON.parse(JSON.stringify(msg))).data));
+    addData(data);
 });
-
-server.on('listening', () => {
-  const address = server.address();
-  console.log(`server listening ${address.address}:${address.port}`);
+server.on('listening', function () {
+    var address = server.address();
+    console.log("server listening " + address.address + ":" + address.port);
 });
-
 server.bind(41234);
-
-
 // Manage data
-const WebSocket = require('ws');
-const wss = new WebSocket.Server({ port: 8080 });
-const listener = require("./listener.js").default
-clients = []
-
+var WS = require('ws');
+var wss = new WS.Server({ port: 8080 });
+var listener = require("./listener.js");
+var clients = [];
 wss.on('connection', function connection(ws) {
-
-  clients.push(new listener(ws))
-
-  ws.on('message', function incoming(message) {
-    console.log('received: %s', message);
-  });
-
-  ws.send('something');
+    clients.push(new listener(ws));
+    ws.on('message', function incoming(message) {
+        console.log('received: %s', message);
+    });
+    ws.send('something');
 });
+function addData(data) {
+    clients.forEach(function (element) {
+        element.addData(data);
+    });
+}

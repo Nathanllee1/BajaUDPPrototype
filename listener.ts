@@ -1,34 +1,50 @@
-module.exports = /** @class */ (function () {
+module.exports = class Listener {
+    live: boolean;
+    client: any;
+    sensors = [];
+    dataBuffer = [];
+    granularity: number;
+    packetSize: number;
+
     // Probably do ms
-    function Listener(client, live, sensors, granularity) {
-        this.sensors = [];
-        this.dataBuffer = [];
+    constructor(client, live: boolean, sensors, granularity) {
         this.client = client;
         this.live = live;
         this.sensors = sensors;
         this.granularity = granularity;
-        this.packetSize = granularity;
-        this.dataBuffer = [];
+
+        this.packetSize = granularity
+
+        this.dataBuffer = []
     }
+
     // Get historical data
-    Listener.prototype.query = function (timeRange, granularity) {
-    };
+    query(timeRange, granularity) {
+
+    }
+
     // For live data only
-    Listener.prototype.addData = function (data) {
+    addData(data) {
         console.log(data);
-        this.dataBuffer.push(data);
+        this.dataBuffer.push(data)
+
         if (this.dataBuffer[0]["stamp"] + this.granularity > data["stamp"]) { // If new data surpasses the granularity
             var sum = 0;
-            for (var i = 0; i < this.dataBuffer.length; i++) {
+            for (var i=0; i<this.dataBuffer.length; i++) {
                 sum += this.dataBuffer[i];
             }
+
             //this.push(sum / this.dataBuffer.length);
+
         }
+
         this.push(JSON.stringify(data));
-    };
-    Listener.prototype.push = function (data) {
+    }
+
+    push(data) {
         console.log(data);
         this.client.send(data);
-    };
-    return Listener;
-}());
+    }
+
+
+}
