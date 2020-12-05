@@ -11,7 +11,7 @@ module.exports = class Listener {
         this.client = client;
         this.live = live;
         this.sensors = sensors;
-        this.granularity = granularity;
+        this.granularity = 1000;
 
         this.packetSize = granularity
 
@@ -21,24 +21,29 @@ module.exports = class Listener {
     // Get historical data
     query(timeRange, granularity) {
 
+
+
     }
 
     // For live data only
     addData(data) {
-        console.log(data);
+        
         this.dataBuffer.push(data)
-
-        if (this.dataBuffer[0]["stamp"] + this.granularity > data["stamp"]) { // If new data surpasses the granularity
+        //console.log(data["stamp"] - this.dataBuffer[0]["stamp"], this.granularity );
+        if (data["stamp"] - this.dataBuffer[0]["stamp"] > this.granularity) { // If new data surpasses the granularity
+            console.log("push")
             var sum = 0;
             for (var i=0; i<this.dataBuffer.length; i++) {
-                sum += this.dataBuffer[i];
+                sum += this.dataBuffer[i]["data"];
             }
 
-            //this.push(sum / this.dataBuffer.length);
+            console.log(this.dataBuffer.length)
 
+            this.push(JSON.stringify({data: sum / this.dataBuffer.length}));
+            this.dataBuffer = []
         }
 
-        this.push(JSON.stringify(data));
+        //this.push(JSON.stringify(data));
     }
 
     push(data) {
