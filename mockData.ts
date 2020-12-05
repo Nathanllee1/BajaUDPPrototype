@@ -17,7 +17,7 @@ function sendMessage() {
       }
     });
   
-    setTimeout(sendMessage, 2000)
+    setTimeout(sendMessage, 1000)
 }
 
 sendMessage()

@@ -43,7 +43,7 @@ module.exports = class Listener {
 
     push(data) {
         console.log(data);
-        this.client.send(data);
+        this.client.sendUTF(data);
     }
 
 

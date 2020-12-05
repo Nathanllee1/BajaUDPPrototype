@@ -1,8 +1,59 @@
-// Recieve Data
+
+const http = require('http')
+const fs = require('fs')
+
+const listener = require("./listener.js")
+
+
+// HTTP
+const fileServer = http.createServer((req, res) => {
+  res.writeHead(200, { 'content-type': 'text/html' })
+  fs.createReadStream('index.html').pipe(res)
+})
+
+fileServer.listen(process.env.PORT || 3000)
+
+const WebSocketServer = require('websocket').server;
+const wss = new WebSocketServer({
+  httpServer: fileServer,
+  autoAcceptConnections: false
+})
+
+
+// WS
+let clients : typeof listener[] = []
+
+wss.on('request', function connection(ws) {
+
+  var wsconnection = ws.accept('echo-protocol', ws.origin);
+
+  clients.push(new listener(wsconnection))
+
+  wsconnection.on('message', function incoming(message) {
+    console.log('received: %s', message);
+  });
+
+});
+
+
+
+
+wss.on('listening', () => {
+  console.log(`ws server listening `)
+})
+
+function addData(data) {
+
+    clients.forEach((element) => {
+        element.addData(data);
+    })
+}
+
+
+
+// UDP
 const dgram = require('dgram');
 const server = dgram.createSocket('udp4');
-
-//const dataStream = fs.
 
 server.on('error', (err) => {
   console.log(`server error:\n${err.stack}`);
@@ -16,33 +67,9 @@ server.on('message', (msg, rinfo) => {
 
 server.on('listening', () => {
   const address = server.address();
-  console.log(`server listening ${address.address}:${address.port}`);
+  console.log(`UDP server listening ${address.address}:${address.port}`);
 });
 
 server.bind(41234);
 
 
-// Manage data
-const WS = require('ws');
-const wss = new WS.Server({ port: 8080 });
-const listener = require("./listener.js")
-
-let clients : typeof listener[] = []
-
-wss.on('connection', function connection(ws) {
-
-  clients.push(new listener(ws))
-
-  ws.on('message', function incoming(message) {
-    console.log('received: %s', message);
-  });
-
-  ws.send('something');
-});
-
-function addData(data) {
-
-    clients.forEach((element) => {
-        element.addData(data);
-    })
-}

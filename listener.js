@@ -28,7 +28,7 @@ module.exports = /** @class */ (function () {
     };
     Listener.prototype.push = function (data) {
         console.log(data);
-        this.client.send(data);
+        this.client.sendUTF(data);
     };
     return Listener;
 }());

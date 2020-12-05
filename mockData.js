@@ -14,6 +14,6 @@ function sendMessage() {
             console.log('Data sent !!!');
         }
     });
-    setTimeout(sendMessage, 2000);
+    setTimeout(sendMessage, 1000);
 }
 sendMessage();
