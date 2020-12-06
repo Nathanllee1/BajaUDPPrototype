@@ -4,7 +4,6 @@ const fs = require('fs')
 
 const listener = require("./listener.js")
 
-
 // HTTP
 const fileServer = http.createServer((req, res) => {
   res.writeHead(200, { 'content-type': 'text/html' })

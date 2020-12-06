@@ -6,7 +6,7 @@ var client = udp.createSocket('udp4');
 
 function sendMessage() {
     
-    let num : number = Math.floor(Math.random() * Math.floor(10));
+    let num : number = Math.floor(Math.random() * Math.floor(1000));
     console.log("sending " + num)
     var data = Buffer.from(JSON.stringify({"mac":"1234125","data":num,"stamp": (new Date().getTime())}));
     client.send(data,41234,'localhost', function(error){

@@ -1,21 +1,66 @@
+<head>
+    
+</head>
+
 <body>
     <h1>Baja UDP Prototype</h1>
     <h2 id="number"></h2>
+    <button id="butt" onclick="connect()">Connect to server</button><br><br>
+    <button id="everything" onclick="changeFreq(this.id)">Everything</button>
+    <button id="half" onclick="changeFreq(this.id)">Half Second</button>
+    <button id="1" onclick="changeFreq(this.id)">1 Second</button>
+    <button id="5" onclick="changeFreq(this.id)">5 Seconds</button>
 
     <script>
-        var exampleSocket = new WebSocket("ws://localhost:3000/", "echo-protocol");
-        exampleSocket.onopen = function (event) {
-            exampleSocket.send("Here's some text that the server is urgently awaiting!"); 
-        };
+        var exampleSocket;
 
-        exampleSocket.onmessage = function (event) {
-            
-            var data = JSON.parse(event.data)
-            console.log(data);
+        function connect() {
+            exampleSocket = new WebSocket("ws://192.168.42.18:3000/", "echo-protocol");
+            exampleSocket.onopen = function (event) {
+                exampleSocket.send(JSON.stringify({"sensors":["gps", "accelerometerY"], "granularity":1000})); 
+            };
 
-            var num = document.getElementById("number")
-            console.log(num);
-            num.innerHTML = data["data"].toString();
+            exampleSocket.onmessage = function (event) {
+                
+                var data = JSON.parse(event.data)
+                console.log(data);
+
+                var num = document.getElementById("number")
+                num.innerHTML = data["data"].toString();
+            }
+
+            document.getElementById("butt").innerHTML = "disconnect"
+            document.getElementById("butt").setAttribute("onClick", "disconnect()")
         }
+
+        function disconnect() {
+            exampleSocket.close();
+            console.log("disconnect")
+            document.getElementById("butt").innerHTML = "cononect"
+            document.getElementById("butt").setAttribute("onClick", "connect()")
+            document.getElementById("number").innerHTML = ""
+        }
+
+        function changeFreq(val) {
+            console.log(val)
+            switch(val) {
+                case "everything":
+                    exampleSocket.send(JSON.stringify({"granularity":1}))
+                    break;
+                case "half":
+                    exampleSocket.send(JSON.stringify({"granularity":500}))
+                    break;
+
+                case "1":
+                    exampleSocket.send(JSON.stringify({"granularity":1000}))
+                    break;
+
+                case "5":
+                    exampleSocket.send(JSON.stringify({"granularity":5000}))
+                    break;
+            }
+        }
+
+        
     </script>
 </body>

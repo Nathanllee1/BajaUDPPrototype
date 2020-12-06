@@ -3,7 +3,7 @@ var udp = require('dgram');
 // creating a client socket
 var client = udp.createSocket('udp4');
 function sendMessage() {
-    var num = Math.floor(Math.random() * Math.floor(10));
+    var num = Math.floor(Math.random() * Math.floor(1000));
     console.log("sending " + num);
     var data = Buffer.from(JSON.stringify({ "mac": "1234125", "data": num, "stamp": (new Date().getTime()) }));
     client.send(data, 41234, 'localhost', function (error) {
